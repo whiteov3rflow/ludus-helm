@@ -1,0 +1,63 @@
+name: backend-ci
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'backend/pyproject.toml'
+
+      - name: Install backend + dev deps
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]'
+
+      - name: Ruff check (lint)
+        run: ruff check backend/app backend/tests
+
+      # TODO: flip continue-on-error to false once pre-existing unformatted
+      # files in backend/app and backend/tests are cleaned up in a separate PR.
+      # Not auto-fixing here to keep this CI-only change out of app code.
+      - name: Ruff format check
+        continue-on-error: true
+        run: ruff format --check backend/app backend/tests
+
+      # TODO: tighten to strict (remove continue-on-error) once Phase 1 typing
+      # debt is resolved (missing stubs for jose/passlib/yaml, pydantic-settings
+      # call-arg false-positives in app/core/config.py).
+      - name: Mypy (typecheck)
+        continue-on-error: true
+        run: mypy backend/app
+
+      - name: Run pytest
+        working-directory: backend
+        env:
+          APP_SECRET_KEY: test
+          ADMIN_EMAIL: admin@example.com
+          ADMIN_PASSWORD: test
+          LUDUS_DEFAULT_URL: https://ludus.test
+          LUDUS_DEFAULT_API_KEY: test-key
+        run: pytest tests -q
+
+      - name: Build backend image
+        run: docker build -f backend/Dockerfile -t insec-platform-backend:ci .
