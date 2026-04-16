@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.egg
+
+# Node
+node_modules/
+dist/
+build/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Generated configs (contain WireGuard private keys)
+data/configs/
+data/backup/
+*.conf
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# Alembic local
+backend/alembic/versions/__pycache__/
+
+# Stitch exports (raw dumps, we extract what we need)
+frontend/stitch-exports/

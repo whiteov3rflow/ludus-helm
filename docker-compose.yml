@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    container_name: insec-backend
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - insec
+
+  frontend:
+    build: ./frontend
+    container_name: insec-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - insec
+
+networks:
+  insec:
+    driver: bridge
