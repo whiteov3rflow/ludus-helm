@@ -52,6 +52,7 @@ jobs:
       - name: Run pytest
         working-directory: backend
         env:
+          APP_ENV: testing
           APP_SECRET_KEY: test
           ADMIN_EMAIL: admin@example.com
           ADMIN_PASSWORD: test
