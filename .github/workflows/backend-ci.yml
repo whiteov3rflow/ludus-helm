@@ -61,4 +61,4 @@ jobs:
         run: pytest tests -q
 
       - name: Build backend image
-        run: docker build -f backend/Dockerfile -t insec-platform-backend:ci .
+        run: docker build -f backend/Dockerfile -t ludus-helm-backend:ci .
